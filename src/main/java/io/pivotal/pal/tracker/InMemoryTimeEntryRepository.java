@@ -5,20 +5,17 @@ import java.util.*;
 public class InMemoryTimeEntryRepository implements TimeEntryRepository{
 
     private Map<Long, TimeEntry> database = new HashMap<>();
+    private Long index = 0L;
 
     public TimeEntry create(TimeEntry timeEntry) {
         Long id = findNextKey();
         timeEntry.setId(id);
-        TimeEntry entity = database.put(id, timeEntry);
-        return entity;
+        database.put(id, timeEntry);
+        return database.get(id);
     }
 
     private Long findNextKey() {
-        try {
-            return Collections.max(database.keySet());
-        } catch (NoSuchElementException ex){
-            return 0L;
-        }
+        return ++index;
     }
 
     public TimeEntry find(long id) {
@@ -30,11 +27,12 @@ public class InMemoryTimeEntryRepository implements TimeEntryRepository{
     }
 
     public TimeEntry update(long id, TimeEntry timeEntry) {
-        database.put(id, timeEntry);
+        timeEntry.setId(id);
+        database.replace(id, timeEntry);
         return database.get(id);
     }
 
-    public void delete(long id) {
-        database.remove(id);
+    public TimeEntry delete(long id) {
+        return database.remove(id);
     }
 }

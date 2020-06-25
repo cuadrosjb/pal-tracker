@@ -26,9 +26,13 @@ dependencies {
     implementation 'mysql:mysql-connector-java'
 
 
+    //This is from the Actuador  & Health Monitor lab
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+
 }
 
 test {
@@ -41,11 +45,15 @@ def TST_DB_URL = "jdbc:mysql://localhost:3306/tracker_test?user=tracker&useSSL=f
 bootRun.environment([
         "WELCOME_MESSAGE": "Hello",
         "SPRING_DATASOURCE_URL": DEV_DB_URL,
+        "MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE": "*",
+        "MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS": "always",
 ])
 
 test.environment([
         "WELCOME_MESSAGE": "Hello from test",
         "SPRING_DATASOURCE_URL": TST_DB_URL,
+        "MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE": "*",
+        "MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS": "always",
 ])
 
 
@@ -58,4 +66,8 @@ flyway {
 
 task testMigrate(type: FlywayMigrateTask) {
     url = TST_DB_URL
+}
+
+springBoot {
+    buildInfo()
 }

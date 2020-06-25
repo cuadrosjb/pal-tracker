@@ -1,6 +1,8 @@
 package io.pivotal.pal.tracker;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class TimeEntry {
@@ -95,5 +97,15 @@ public class TimeEntry {
                 ", date=" + date +
                 ", hours=" + hours +
                 '}';
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("id", id);
+        values.put("project_id", projectId);
+        values.put("user_id", userId);
+        values.put("date", date);
+        values.put("hours", hours);
+        return values;
     }
 }

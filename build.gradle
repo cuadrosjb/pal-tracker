@@ -1,7 +1,16 @@
+import org.flywaydb.gradle.task.FlywayMigrateTask
+
+buildscript {
+    dependencies {
+        classpath 'mysql:mysql-connector-java:8.0.13'
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.2.2.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'java'
+    id "org.flywaydb.flyway" version "5.2.1"
 }
 
 repositories {
@@ -12,6 +21,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter:2.2.4.RELEASE'
 
+    //This is from the JDBC Template lab
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'mysql:mysql-connector-java'
+
+
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
@@ -21,10 +35,27 @@ test {
     useJUnitPlatform()
 }
 
+def DEV_DB_URL = "jdbc:mysql://localhost:3306/tracker_dev?user=tracker&useSSL=false&useTimezone=true&serverTimezone=UTC&useLegacyDatetimeCode=false";
+def TST_DB_URL = "jdbc:mysql://localhost:3306/tracker_test?user=tracker&useSSL=false&useTimezone=true&serverTimezone=UTC&useLegacyDatetimeCode=false";
+
 bootRun.environment([
         "WELCOME_MESSAGE": "Hello",
+        "SPRING_DATASOURCE_URL": DEV_DB_URL,
 ])
 
 test.environment([
         "WELCOME_MESSAGE": "Hello from test",
+        "SPRING_DATASOURCE_URL": TST_DB_URL,
 ])
+
+
+flyway {
+    url = DEV_DB_URL
+    user = "tracker"
+    password = ""
+    locations = ["filesystem:databases/tracker/migrations"]
+}
+
+task testMigrate(type: FlywayMigrateTask) {
+    url = TST_DB_URL
+}

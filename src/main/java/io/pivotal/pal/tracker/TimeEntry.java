@@ -1,10 +1,15 @@
 package io.pivotal.pal.tracker;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+
+@JsonPOJOBuilder
 public class TimeEntry {
 
     private long id;
@@ -107,5 +112,9 @@ public class TimeEntry {
         values.put("date", date);
         values.put("hours", hours);
         return values;
+    }
+
+    public Object[] toObjectArr(){
+        return new Object[]{ projectId, userId, Date.valueOf(date), hours, id };
     }
 }
